@@ -56,37 +56,24 @@ while cap.isOpened():
     bbox_id = tracker.update(dets)
 
     red_line_y = 250
-    blue_line_y = 350
+    blue_line_y = 300
 
     for bbox in bbox_id:
         x3, y3, x4, y4, id = bbox
         cx = int((x3 + x4) / 2)
         cy = int((y3 + y4) / 2)
-        #cv2.circle(frame, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
-        #cv2.putText(frame, str(int(id)), (cx, cy - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 255), 2)
-        #if red_line_y < cy + offset and red_line_y > cy - offset:
-        #    down[id] = cy
-        #    if id in down:
-        #        cv2.circle(frame, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
-        #        cv2.putText(frame, str(int(id)), (cx, cy - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 255), 2)
-        
-        #if blue_line_y < cy + offset and blue_line_y > cy - offset:
-        #    up[id] = cy
-        #    if id in up:
-        #        cv2.circle(frame, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
-        #        cv2.putText(frame, str(int(id)), (cx, cy - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 255), 2)
-        if red_line_y < cy + offset and red_line_y > cy - offset:
+        if red_line_y < (cy + offset) and red_line_y > (cy - offset):
             down[id] = cy
         if id in down:
-            if blue_line_y < cy + offset and blue_line_y > cy - offset:
+            if blue_line_y < (cy + offset) and blue_line_y > (cy - offset):
                 cv2.circle(frame, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
                 cv2.putText(frame, str(int(id)), (cx, cy - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 255), 2)
                 counter_down.append(id)
-        
-        if blue_line_y < cy + offset and blue_line_y > cy - offset:
+
+        if blue_line_y < (cy + offset) and blue_line_y > (cy - offset):
             up[id] = cy
         if id in up:
-            if red_line_y < cy + offset and red_line_y > cy - offset:
+            if red_line_y < (cy + offset) and red_line_y > (cy - offset):
                 cv2.circle(frame, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
                 cv2.putText(frame, str(int(id)), (cx, cy - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 255), 2)
                 counter_up.append(id)
@@ -101,10 +88,15 @@ while cap.isOpened():
     cv2.line(frame, (250, 250), (750, 250), red_color, 2)
     cv2.putText(frame, "Red Line", (500, 240), cv2.FONT_HERSHEY_SIMPLEX, 0.9, red_color, 2)
 
-    cv2.line(frame, (50, 350), (950, 350), blue_color, 2)
-    cv2.putText(frame, "Blue Line", (700, 340), cv2.FONT_HERSHEY_SIMPLEX, 0.9, blue_color, 2)
+    cv2.line(frame, (50, 300), (950, 300), blue_color, 2)
+    cv2.putText(frame, "Blue Line", (700, 290), cv2.FONT_HERSHEY_SIMPLEX, 0.9, blue_color, 2)
 
-    
+    downwards = (len(counter_down))
+    upwards = (len(counter_up))
+
+    cv2.putText(frame, f'Downward Trucks: {downwards}', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, text_color, 2)
+    cv2.putText(frame, f'Upward Trucks: {upwards}', (600, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, text_color, 2)
+
     cv2.imshow('Frame', frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
