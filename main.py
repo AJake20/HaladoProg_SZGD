@@ -19,6 +19,8 @@ classnames = ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'trai
 
 tracker = Sort()
 count = 0
+offset = 2  # vonal vastagsága
+down = {}
 
 while cap.isOpened():
     ret, frame = cap.read()
@@ -49,18 +51,24 @@ while cap.isOpened():
 
     bbox_id = tracker.update(dets)
 
+    red_line_y = 250
+    blue_line_y = 350
+
     for bbox in bbox_id:
         x3, y3, x4, y4, id = bbox
         cx = int((x3 + x4) / 2)
         cy = int((y3 + y4) / 2)
-        cv2.circle(frame, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
-        cv2.putText(frame, str(int(id)), (cx, cy - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 255), 2)
+        #cv2.circle(frame, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
+        #cv2.putText(frame, str(int(id)), (cx, cy - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 255), 2)
+        if red_line_y < cy + offset and red_line_y > cy - offset:
+            down[id] = cy
+            if id in down:
+                cv2.circle(frame, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
+                cv2.putText(frame, str(int(id)), (cx, cy - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 255), 2)
+    
+    print(down)
     
     #print(bbox_id)
-
-    red_line_y = 250
-    blue_line_y = 350
-
     text_color = (255, 0, 255)
     red_color = (0, 0, 255)
     blue_color = (255, 0, 0)
