@@ -3,6 +3,7 @@ ultralytics
 cvzone
 opencv-python 
 numpy
+pandas
 
 #sort.py https://github.com/abewley/sort/blob/master/requirements.txt
 filterpy

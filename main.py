@@ -15,19 +15,63 @@ model = ultralytics.YOLO('yolov8s.pt')
 
 cap = cv2.VideoCapture('input.mp4')
 
-classnames = ['truck']
+classnames = ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck']
 
 tracker = Sort()
+count = 0
 
 while cap.isOpened():
     ret, frame = cap.read()
     if not ret:
         break
-    
+
     frame = cv2.resize(frame, (1020, 500))
     results = model.predict(frame)
-    a = results[0].boxes.data.detach().cpu().numpy()
+    a = results[0].boxes.data
+    a = a.detach().cpu().numpy()
     px = pd.DataFrame(a).astype("float")
+    #print(px)
+
+    # Build detection array in format expected by SORT: [[x1,y1,x2,y2,score], ...]
+    dets_list = []
+    for index, row in px.iterrows():
+        x1, y1, x2, y2 = int(row[0]), int(row[1]), int(row[2]), int(row[3])
+        conf = float(row[4])
+        cls = int(row[5])
+        class_name = classnames[cls]
+        if class_name == 'truck':
+            dets_list.append([x1, y1, x2, y2])
+
+    if len(dets_list) > 0:
+        dets = np.array(dets_list, dtype=float)
+    else:
+        dets = np.empty((0, 4), dtype=float)
+
+    bbox_id = tracker.update(dets)
+
+    for bbox in bbox_id:
+        x3, y3, x4, y4, id = bbox
+        cx = int((x3 + x4) / 2)
+        cy = int((y3 + y4) / 2)
+        cv2.circle(frame, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
+        cv2.putText(frame, str(int(id)), (cx, cy - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 255), 2)
+    
+    #print(bbox_id)
+
+    red_line_y = 250
+    blue_line_y = 350
+
+    text_color = (255, 0, 255)
+    red_color = (0, 0, 255)
+    blue_color = (255, 0, 0)
+
+    cv2.line(frame, (250, 250), (750, 250), red_color, 2)
+    cv2.putText(frame, "Red Line", (500, 240), cv2.FONT_HERSHEY_SIMPLEX, 0.9, red_color, 2)
+
+    cv2.line(frame, (50, 350), (950, 350), blue_color, 2)
+    cv2.putText(frame, "Blue Line", (700, 340), cv2.FONT_HERSHEY_SIMPLEX, 0.9, blue_color, 2)
+
+    
     cv2.imshow('Frame', frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
