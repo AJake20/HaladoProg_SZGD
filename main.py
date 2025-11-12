@@ -2,44 +2,36 @@
 # Fájl: main.py
 # Székely Gábor Dániel - E5LG6T
 
+import cv2
+import cvzone
+import math
+from sort import *
 import ultralytics
+import pandas as pd
 # Sikeres telepítés ellenőrzése
 print("Ultralytics version:", ultralytics.__version__)
 
-import cv2
-import pandas as pd
-from ultralytics import YOLO
-#from tracker import *
+model = ultralytics.YOLO('yolov8s.pt')
 
-#  YOLO small modell betöltése
-model=YOLO("yolov8s.pt")
+cap = cv2.VideoCapture('input.mp4')
 
-class_list = {'car', 'motorcycle', 'bus', 'truck'}
+classnames = ['truck']
 
-#tracker = Tracker()
-count = 0
-
-# Videó megnyitása
-cap = cv2.VideoCapture("input.mp4")
+tracker = Sort()
 
 while cap.isOpened():
     ret, frame = cap.read()
     if not ret:
         break
-    count += 1
+    
     frame = cv2.resize(frame, (1020, 500))
-
     results = model.predict(frame)
-    # Tesztelés
-    #print(results)
-    a = results[0].boxes.data
-    a = a.detach().cpu().numpy()
+    a = results[0].boxes.data.detach().cpu().numpy()
     px = pd.DataFrame(a).astype("float")
-    #print(px)
-
-    cv2.imshow("Frame", frame)
-    # Kilépés 'q' billentyűvel
+    cv2.imshow('Frame', frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 cap.release()
 cv2.destroyAllWindows()
+
+

@@ -1,6 +1,10 @@
 # requirements.txt
-ultralytics==8.3.228
-pandas
-opencv-python
+ultralytics
+cvzone
+opencv-python 
+numpy
 
-
+#sort.py https://github.com/abewley/sort/blob/master/requirements.txt
+filterpy
+scikit-image
+lap
