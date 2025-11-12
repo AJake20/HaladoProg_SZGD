@@ -21,6 +21,10 @@ tracker = Sort()
 count = 0
 offset = 2  # vonal vastagsága
 down = {}
+up = {}
+
+counter_down = []
+counter_up = []
 
 while cap.isOpened():
     ret, frame = cap.read()
@@ -60,14 +64,35 @@ while cap.isOpened():
         cy = int((y3 + y4) / 2)
         #cv2.circle(frame, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
         #cv2.putText(frame, str(int(id)), (cx, cy - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 255), 2)
+        #if red_line_y < cy + offset and red_line_y > cy - offset:
+        #    down[id] = cy
+        #    if id in down:
+        #        cv2.circle(frame, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
+        #        cv2.putText(frame, str(int(id)), (cx, cy - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 255), 2)
+        
+        #if blue_line_y < cy + offset and blue_line_y > cy - offset:
+        #    up[id] = cy
+        #    if id in up:
+        #        cv2.circle(frame, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
+        #        cv2.putText(frame, str(int(id)), (cx, cy - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 255), 2)
         if red_line_y < cy + offset and red_line_y > cy - offset:
             down[id] = cy
-            if id in down:
+        if id in down:
+            if blue_line_y < cy + offset and blue_line_y > cy - offset:
                 cv2.circle(frame, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
                 cv2.putText(frame, str(int(id)), (cx, cy - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 255), 2)
+                counter_down.append(id)
+        
+        if blue_line_y < cy + offset and blue_line_y > cy - offset:
+            up[id] = cy
+        if id in up:
+            if red_line_y < cy + offset and red_line_y > cy - offset:
+                cv2.circle(frame, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
+                cv2.putText(frame, str(int(id)), (cx, cy - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 255), 2)
+                counter_up.append(id)
     
-    print(down)
-    
+    #print(down)
+    #print(up)
     #print(bbox_id)
     text_color = (255, 0, 255)
     red_color = (0, 0, 255)
