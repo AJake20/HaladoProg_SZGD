@@ -68,7 +68,7 @@ Kilépés: a videóablakban nyomd meg a `q` billentyűt.
 Fontos konfigurációk a `main.py`-ben
 -----------------------------------
 - `model = YOLO('yolov8s.pt')` — modellfájl helye.
-- `selected_classes` — figyelt osztályok; használj listát vagy halmazt, pl. `{'truck', 'car'}` (NE stringet: `"truck"` hibásan karakter-alapú `in` ellenőrzést okoz).
+- `selected_classes` — figyelt osztályok.
 - `Sort(max_age=..., min_hits=..., iou_threshold=...)` — tracker paraméterek a követés stabilitásához.
 - `red_line_y`, `blue_line_y`, `offset` — a számlálási zóna paraméterei.
 
